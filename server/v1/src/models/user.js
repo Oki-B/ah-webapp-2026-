@@ -13,6 +13,9 @@ module.exports = (sequelize, DataTypes) => {
       models.User.hasMany(models.EmailVerification, {
         foreignKey: "user_id",
       });
+      models.User.hasMany(models.AuthProvider, {
+        foreignKey: "user_id",
+      });
     }
   }
   User.init(
@@ -65,11 +68,6 @@ module.exports = (sequelize, DataTypes) => {
         field: "is_active",
         type: DataTypes.BOOLEAN,
         defaultValue: false,
-      },
-      provider: DataTypes.STRING,
-      providerId: {
-        field: "provider_id",
-        type: DataTypes.STRING,
       },
     },
     {
