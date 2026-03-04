@@ -1,7 +1,6 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
+const { hashPassword } = require("../helpers/bcrypt");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -13,16 +12,75 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  User.init({
-    email: DataTypes.STRING,
-    password: DataTypes.STRING,
-    isEmailVerified: DataTypes.BOOLEAN,
-    isActive: DataTypes.BOOLEAN,
-    provider: DataTypes.STRING,
-    providerId: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'User',
-  });
+  User.init(
+    {
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: {
+          msg: "Email already registered",
+        },
+        validate: {
+          isEmail: {
+            msg: "Email must be a valid email address",
+          },
+          notEmpty: {
+            msg: "Email cannot be empty",
+          },
+          notNull: {
+            msg: "Email is required",
+          },
+        },
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: "Password wajib diisi",
+          },
+          notEmpty: {
+            msg: "Password tidak boleh kosong",
+          },
+          isStrongPassword(value) {
+            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{12,}$/;
+
+            if (!regex.test(value)) {
+              throw new Error(
+                "Password minimal 12 karakter, harus ada huruf besar, huruf kecil, dan angka",
+              );
+            }
+          },
+        },
+      },
+      isEmailVerified: {
+        field: "is_email_verified",
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      isActive: {
+        field: "is_active",
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      provider: DataTypes.STRING,
+      providerId: {
+        field: "provider_id",
+        type: DataTypes.STRING,
+      },
+    },
+    {
+      hooks: {
+        beforeCreate: async (user, options) => {
+          if (user.password) {
+            user.password = await hashPassword(user.password);
+          }
+        },
+      },
+      sequelize,
+      modelName: "User",
+      underscored: true,
+    },
+  );
   return User;
 };
