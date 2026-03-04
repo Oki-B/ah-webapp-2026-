@@ -2,47 +2,38 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('users', {
+    await queryInterface.createTable('email_verifications', {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4
       },
-      email: {
-        type: Sequelize.STRING,
+      user_id: {
         allowNull: false,
-        unique: true,
+        type: Sequelize.UUID,
+        references: {
+          model: 'users',
+          key: 'id'
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
       },
-      password: {
-        type: Sequelize.STRING,
+      token_hash: {
         allowNull: false,
-      },
-      is_email_verified: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false
-      },
-      is_active: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false
-      },
-      provider: {
         type: Sequelize.STRING
       },
-      provider_id: {
-        type: Sequelize.STRING
-      },
-      created_at: {
+      expires_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updated_at: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE
       }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('users');
+    await queryInterface.dropTable('email_verifications');
   }
 };
