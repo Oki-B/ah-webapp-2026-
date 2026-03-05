@@ -20,6 +20,17 @@ module.exports = (sequelize, DataTypes) => {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: {
+        msg: "Role name must be unique",
+      },
+      validate: {
+        notEmpty: {
+          msg: "Role name cannot be empty",
+        },
+        notNull: {
+          msg: "Role name is required",
+        },
+      },
     },
     description: {
       type: DataTypes.STRING,
