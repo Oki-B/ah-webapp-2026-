@@ -28,6 +28,13 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: false,
       },
+      attempts: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      usedAt: {
+        type: DataTypes.DATE,
+      },
     },
     {
       sequelize,

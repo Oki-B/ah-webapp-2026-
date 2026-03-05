@@ -27,6 +27,15 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
+      attempts: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+      },
+      used_at: {
+        type: Sequelize.DATE,
+        defaultValue: null
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE

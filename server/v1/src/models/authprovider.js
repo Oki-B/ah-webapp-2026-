@@ -30,6 +30,17 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "AuthProvider",
+      indexes: [
+        {
+          unique: true,
+          fields: ["provider", "provider_id"],
+        },
+        {
+          unique: true,
+          fields: ["user_id", "provider"],
+        },
+      ],
+
       underscored: true,
     },
   );

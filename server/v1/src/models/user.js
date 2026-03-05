@@ -10,6 +10,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      models.User.belongsTo(models.Role, {
+        foreignKey: "role_id",
+      });
       models.User.hasMany(models.EmailVerification, {
         foreignKey: "user_id",
       });
@@ -68,6 +71,15 @@ module.exports = (sequelize, DataTypes) => {
         field: "is_active",
         type: DataTypes.BOOLEAN,
         defaultValue: false,
+      },
+      roleId: {
+        field: "role_id",
+        type: DataTypes.UUID,
+        allowNull: false,
+      },
+      lastLoginAt: {
+        field: "last_login_at",
+        type: DataTypes.DATE,
       },
     },
     {
