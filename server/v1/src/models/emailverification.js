@@ -17,14 +17,17 @@ module.exports = (sequelize, DataTypes) => {
   EmailVerification.init(
     {
       userId: {
+        field: "user_id",
         type: DataTypes.UUIDV4,
         allowNull: false,
       },
       tokenHash: {
+        field: "token_hash",
         type: DataTypes.STRING,
         allowNull: false,
       },
       expiresAt: {
+        field: "expires_at",
         type: DataTypes.DATE,
         allowNull: false,
       },
@@ -33,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       usedAt: {
+        field: "used_at",
         type: DataTypes.DATE,
       },
     },

@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   AuthProvider.init(
     {
       userId: {
+        field: "user_id",
         type: DataTypes.UUID,
         allowNull: false,
       },
@@ -23,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       providerId: {
+        field: "provider_id",
         type: DataTypes.STRING,
         allowNull: true,
       },
