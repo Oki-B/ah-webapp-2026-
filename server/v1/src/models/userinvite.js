@@ -56,8 +56,13 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE, 
         allowNull: false,
       },
-      usedAt: { 
-        field: "used_at",
+      resendCount:{
+        field: "resend_count",
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      acceptedAt: { 
+        field: "accepted_at",
         type: DataTypes.DATE, 
       },
     },

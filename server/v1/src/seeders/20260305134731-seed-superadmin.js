@@ -1,7 +1,7 @@
 "use strict";
 
 require("dotenv").config();
-const { hashPassword } = require("../helpers/bcrypt");
+const { hashPassword } = require("../helpers/bcrypt.helper");
 const { v4: uuidv4 } = require("uuid");
 
 /** @type {import('sequelize-cli').Migration} */
