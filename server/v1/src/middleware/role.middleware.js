@@ -1,9 +1,15 @@
-const authorizeRole = (...allowedRoles) => {
-  return (req, res, next) => {
-    try {
-      const userRole = req.user.role;
+const { Role } = require("../models");
 
-      if (!allowedRoles.includes(userRole)) {
+const authorizeRole = (...allowedRoles) => {
+  return async (req, res, next) => {
+    try {
+      const userRoleId = req.user.role;
+    //   console.log(userRoleId)
+
+      const userRole = await Role.findByPk(userRoleId);
+    //   console.log(userRole)
+
+      if (!allowedRoles.includes(userRole.name)) {
         return res.status(403).json({
           message: "Forbidden: insufficient permissions",
         });

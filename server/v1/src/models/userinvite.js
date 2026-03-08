@@ -21,8 +21,14 @@ module.exports = (sequelize, DataTypes) => {
   }
   UserInvite.init(
     {
-      email: { 
-        type: DataTypes.STRING, 
+      id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        primaryKey: true,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      email: {
+        type: DataTypes.STRING,
         allowNull: false,
         validate: {
           isEmail: {
@@ -36,34 +42,35 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      roleId: { 
+      roleId: {
         field: "role_id",
-        type: DataTypes.UUID, 
+        type: DataTypes.UUID,
         allowNull: false,
       },
-      tokenHash: { 
+      tokenHash: {
         field: "token_hash",
-        type: DataTypes.STRING, 
+        type: DataTypes.STRING,
         allowNull: false,
       },
-      invitedBy: { 
+      invitedBy: {
         field: "invited_by",
-        type: DataTypes.UUID, 
+        type: DataTypes.UUID,
         allowNull: false,
       },
-      expiresAt: { 
+      expiresAt: {
         field: "expires_at",
-        type: DataTypes.DATE, 
+        type: DataTypes.DATE,
         allowNull: false,
       },
-      resendCount:{
+      resendCount: {
         field: "resend_count",
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        defaultValue: 0,
       },
-      acceptedAt: { 
+      acceptedAt: {
         field: "accepted_at",
-        type: DataTypes.DATE, 
+        type: DataTypes.DATE,
       },
     },
     {
