@@ -5,6 +5,7 @@ const { withTransaction } = require("../helpers/transaction.helper");
 const { maskEmail } = require("../helpers/mask.helper");
 
 class InviteService {
+  // from this line is Services only for superadmin
   static async createInvite({ email, roleId, invitedBy }) {
     const existingUser = await User.findOne({
       where: { email },
@@ -12,6 +13,14 @@ class InviteService {
 
     if (existingUser) {
       throw new Error("User already exists");
+    }
+
+    const existingInvite = await UserInvite.findOne({
+      where: { email },
+    });
+
+    if (existingInvite) {
+      throw new Error("Invitation already sent to this email");
     }
 
     const token = generateToken();
@@ -31,6 +40,49 @@ class InviteService {
     return invitation;
   }
 
+  static async resendInvite(id) {
+    return withTransaction(async (transaction) => {
+      const invitation = await UserInvite.findByPk(id, { transaction });
+
+      if (!invitation) {
+        throw new Error("Invitation not found");
+      }
+
+      if (invitation.acceptedAt) {
+        throw new Error("Invitation already accepted");
+      }
+
+      if (new Date() > invitation.expiresAt) {
+        throw new Error("Invitation already expired");
+      }
+
+      if (invitation.resendCount > 3) {
+        throw new Error("Maximum resend attempts reached");
+      }
+
+      const token = generateToken();
+      const tokenHash = hashToken(token);
+
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+      await invitation.update(
+        {
+          tokenHash,
+          expiresAt,
+          resendCount: invitation.resendCount + 1,
+        },
+        { transaction },
+      );
+
+      console.log(invitation.email);
+
+      await sendInvitationEmail(invitation.email, token);
+
+      return invitation;
+    });
+  }
+
+  // from this line is Services for public user / admin
   static async getInviteByToken(token) {
     const tokenHash = hashToken(token);
 

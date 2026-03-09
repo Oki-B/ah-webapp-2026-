@@ -11,7 +11,7 @@ router.use(authorizeRole("superadmin"));
 router.post("/invites", AdminInviteController.createInvite)
 // router.get("/invites")
 // router.get("/invites/:id")
-// router.post("invites/:id/resend")
+router.post("/invites/:id/resend", AdminInviteController.resendInvite)
 // router.delete("/invites/:id")
 
 module.exports = router;

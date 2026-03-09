@@ -32,6 +32,20 @@ class AdminInviteController {
 
   static async resendInvite(req, res) {
     // code here
+    try {
+      const { id } = req.params;
+
+      const result = await InviteService.resendInvite(id);
+
+      res.status(200).json({
+        message: "Invitation resent",
+        data: result,
+      });
+    } catch (error) {
+      res.status(400).json({
+        message: error.message,
+      });
+    }
   }
 
   static async cancelInvite(req, res) {
