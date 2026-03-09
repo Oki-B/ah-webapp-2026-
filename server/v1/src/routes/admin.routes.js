@@ -8,10 +8,10 @@ router.get("/", (req, res) => {
 });
 
 router.use(authorizeRole("superadmin"));
-router.post("/invites", AdminInviteController.createInvite)
-// router.get("/invites")
-// router.get("/invites/:id")
-router.post("/invites/:id/resend", AdminInviteController.resendInvite)
-// router.delete("/invites/:id")
+router.post("/invites", AdminInviteController.createInvite);
+router.get("/invites", AdminInviteController.getInvites);
+router.get("/invites/:id", AdminInviteController.getInviteById);
+router.post("/invites/:id/resend", AdminInviteController.resendInvite);
+router.delete("/invites/:id", AdminInviteController.cancelInvite);
 
 module.exports = router;

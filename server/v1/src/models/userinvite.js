@@ -43,33 +43,27 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       roleId: {
-        field: "role_id",
         type: DataTypes.UUID,
         allowNull: false,
       },
       tokenHash: {
-        field: "token_hash",
         type: DataTypes.STRING,
         allowNull: false,
       },
       invitedBy: {
-        field: "invited_by",
         type: DataTypes.UUID,
         allowNull: false,
       },
       expiresAt: {
-        field: "expires_at",
         type: DataTypes.DATE,
         allowNull: false,
       },
       resendCount: {
-        field: "resend_count",
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0,
       },
       acceptedAt: {
-        field: "accepted_at",
         type: DataTypes.DATE,
       },
     },

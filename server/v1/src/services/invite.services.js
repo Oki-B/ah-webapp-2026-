@@ -6,6 +6,44 @@ const { maskEmail } = require("../helpers/mask.helper");
 
 class InviteService {
   // from this line is Services only for superadmin
+
+  static async getInvites() {
+    const invites = await UserInvite.findAll({
+      attributes: {
+        exclude: [
+          "tokenHash",
+          "createdAt",
+          "updatedAt",
+          "invited_by",
+          "role_id",
+        ],
+      },
+      order: [["createdAt", "DESC"]],
+    });
+
+    return invites;
+  }
+
+  static async getInviteById(id) {
+    const invite = await UserInvite.findByPk(id, {
+      attributes: {
+        exclude: [
+          "tokenHash",
+          "createdAt",
+          "updatedAt",
+          "invited_by",
+          "role_id",
+        ],
+      },
+    });
+
+    if (!invite) {
+      throw new Error("Invitation not found");
+    }
+
+    return invite;
+  }
+
   static async createInvite({ email, roleId, invitedBy }) {
     const existingUser = await User.findOne({
       where: { email },
@@ -37,7 +75,12 @@ class InviteService {
     // kirim email invite di sini, gunakan token untuk link pendaftaran
     await sendInvitationEmail(email, token);
 
-    return invitation;
+    return {
+      id: invitation.id,
+      email: invitation.email,
+      roleId: invitation.roleId,
+      expiresAt: invitation.expiresAt,
+    };
   }
 
   static async resendInvite(id) {
@@ -78,8 +121,46 @@ class InviteService {
 
       await sendInvitationEmail(invitation.email, token);
 
-      return invitation;
+      return {
+        id: invitation.id,
+        email: invitation.email,
+        roleId: invitation.roleId,
+        expiresAt: invitation.expiresAt,
+      };
     });
+  }
+
+  static async deleteInvite(id) {
+    const invite = await UserInvite.findByPk(id);
+
+    if (!invite) {
+      throw new Error("Invitation not found");
+    }
+
+    if (invite.acceptedAt) {
+      throw new Error("Cannot delete accepted invitation");
+    }
+
+    await invite.destroy();
+
+    return true;
+  }
+
+  static async clearInvites() {
+    try {
+      await UserInvite.destroy({
+        where: {
+          acceptedAt: null,
+          expiresAt: {
+            [Op.lt]: new Date(),
+          },
+        },
+      });
+
+      return true;
+    } catch (error) {
+      throw new Error("Failed to clear expired invitations");
+    }
   }
 
   // from this line is Services for public user / admin
@@ -91,8 +172,6 @@ class InviteService {
         tokenHash: tokenHash,
       },
     });
-
-    console.log(invite.expiresAt);
 
     if (!invite) {
       throw new Error("Invalid invitation token");
@@ -138,7 +217,7 @@ class InviteService {
         { transaction },
       );
 
-      return user;
+      return;
     });
   }
 }
