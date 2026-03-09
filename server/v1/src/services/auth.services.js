@@ -29,7 +29,7 @@ class AuthService {
 
     const accessToken = generateAccessToken({
       id: user.id,
-      role: user.role_id,
+      role: user.roleId,
       email: user.email,
     });
 

@@ -3,11 +3,11 @@ const InviteService = require("../services/invite.services");
 class AdminInviteController {
   static async createInvite(req, res) {
     try {
-      const { email, role_id } = req.body;
+      const { email, roleId } = req.body;
 
       const invite = await InviteService.createInvite({
         email,
-        role_id,
+        roleId,
         invitedBy: req.user.id,
       });
 
