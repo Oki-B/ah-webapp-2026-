@@ -29,11 +29,17 @@ class AuthService {
 
     const accessToken = generateAccessToken({
       id: user.id,
-      role: user.role_id,
+      role: user.roleId,
       email: user.email,
     });
 
     return accessToken;
+  }
+
+  static async logout(userId) {
+    // For JWT, logout is typically handled on the client side by deleting the token.
+    // Optionally, you can implement token blacklisting on the server side if needed.
+    return;
   }
 }
 
