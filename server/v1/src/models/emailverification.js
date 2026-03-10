@@ -16,6 +16,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   EmailVerification.init(
     {
+      id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        primaryKey: true,
+        defaultValue: DataTypes.UUIDV4,
+      },
       userId: {
         field: "user_id",
         type: DataTypes.UUIDV4,

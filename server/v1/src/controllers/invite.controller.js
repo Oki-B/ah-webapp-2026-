@@ -3,7 +3,7 @@ const InviteService = require("../services/invite.services");
 class InviteController {
   static async getInviteByToken(req, res) {
     try {
-      const { token } = req.params;
+      const { token } = req.query;
 
       const invite = await InviteService.getInviteByToken(token);
 
@@ -22,14 +22,14 @@ class InviteController {
     try {
       const { token, password } = req.body;
 
-      const user = await InviteService.acceptInvitation({
+      const verification = await InviteService.acceptInvitation({
         token,
         password,
       });
 
       res.status(201).json({
         message: "Invitation accepted",
-        data: user,
+        data: verification,
       });
     } catch (error) {
       res.status(400).json({

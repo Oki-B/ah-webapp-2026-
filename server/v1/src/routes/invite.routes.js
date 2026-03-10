@@ -6,7 +6,7 @@ router.get("/", (req, res) => {
   res.json({ message: "It's on invite router" });
 });
 
-router.get("/:token", InviteController.getInviteByToken);
+router.get("/", InviteController.getInviteByToken);
 router.post("/accept", InviteController.acceptInvitation);
 
 module.exports = router;

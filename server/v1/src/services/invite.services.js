@@ -4,6 +4,7 @@ const { UserInvite, User } = require("../models");
 const { withTransaction } = require("../helpers/transaction.helper");
 const { maskEmail } = require("../helpers/mask.helper");
 const { Op } = require("sequelize");
+const { createVerification } = require("./emailVerification.services");
 
 class InviteService {
   // from this line is Services only for superadmin
@@ -278,7 +279,15 @@ class InviteService {
         { transaction },
       );
 
-      return;
+      console.log(user.id);
+
+      const verification = await createVerification(
+        user.id,
+        user.email,
+        transaction,
+      );
+
+      return verification;
     });
   }
 }
