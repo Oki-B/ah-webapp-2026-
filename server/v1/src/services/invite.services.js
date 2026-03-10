@@ -3,25 +3,86 @@ const { generateToken, hashToken } = require("../helpers/token.helper");
 const { UserInvite, User } = require("../models");
 const { withTransaction } = require("../helpers/transaction.helper");
 const { maskEmail } = require("../helpers/mask.helper");
+const { Op } = require("sequelize");
 
 class InviteService {
   // from this line is Services only for superadmin
 
-  static async getInvites() {
-    const invites = await UserInvite.findAll({
-      attributes: {
-        exclude: [
-          "tokenHash",
-          "createdAt",
-          "updatedAt",
-          "invited_by",
-          "role_id",
-        ],
-      },
-      order: [["createdAt", "DESC"]],
+  static async getInvites(query) {
+    const page = parseInt(query.page) || 1;
+    const limit = parseInt(query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const { search, status, sortBy, sortOrder } = query;
+
+    const where = {};
+
+    // SEARCH EMAIL
+    if (search) {
+      where.email = {
+        [Op.iLike]: `%${search}%`,
+      };
+    }
+
+    // FILTER STATUS
+    if (status === "accepted") {
+      where.acceptedAt = { [Op.ne]: null };
+    }
+
+    if (status === "pending") {
+      where.acceptedAt = null;
+      where.expiresAt = { [Op.gt]: new Date() };
+    }
+
+    if (status === "expired") {
+      where.acceptedAt = null;
+      where.expiresAt = { [Op.lt]: new Date() };
+    }
+
+    // SORTING
+    const allowedSortFields = [
+      "email",
+      "createdAt",
+      "expiresAt",
+      "resendCount",
+      "acceptedAt",
+    ];
+
+    const sortField = allowedSortFields.includes(sortBy) ? sortBy : "createdAt";
+
+    const orderDirection =
+      sortOrder && sortOrder.toLowerCase() === "asc" ? "ASC" : "DESC";
+
+    const { count, rows } = await UserInvite.findAndCountAll({
+      where,
+      limit,
+      offset,
+      order: [[sortField, orderDirection]],
+      attributes: [
+        "id",
+        "email",
+        "roleId",
+        "invitedBy",
+        "expiresAt",
+        "resendCount",
+        "acceptedAt",
+        "createdAt",
+      ],
     });
 
-    return invites;
+    return {
+      data: rows,
+      pagination: {
+        total: count,
+        page,
+        limit,
+        totalPages: Math.ceil(count / limit),
+      },
+      sort: {
+        sortBy: sortField,
+        sortOrder: orderDirection,
+      },
+    };
   }
 
   static async getInviteById(id) {

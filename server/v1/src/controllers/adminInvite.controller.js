@@ -25,7 +25,8 @@ class AdminInviteController {
   static async getInvites(req, res) {
     // code here
     try {
-      const invites = await InviteService.getInvites();
+      const query = req.query;
+      const invites = await InviteService.getInvites(query);
       res.status(200).json({
         message: "Invites retrieved successfully",
         data: invites,
